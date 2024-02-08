@@ -1,37 +1,45 @@
 ﻿using Design_Patterns;
 using System;
 
-DatabaseManager? instanceT1 = null;
-DatabaseManager? instanceT2 = null;
-
-// Initialize two threads and print their instances
-Thread t1 = new Thread(() =>
+// Create Employee class
+public class Employee
 {
-    instanceT1 = DatabaseManager.Instance;
-    Console.WriteLine($"Instance obtained by Thread 1: {instanceT1}");
-});
-
-Thread t2 = new Thread(() =>
-{
-    instanceT2 = DatabaseManager.Instance;
-    Console.WriteLine($"Instance obtained by Thread 2: {instanceT2}");
-});
-
-// Start threads and pause the execution of the main thread until t1 and t2 completes it's execution
-t1.Start();
-t2.Start();
-
-t1.Join();
-t2.Join();
-
-// Comparing instances obtained by each thread
-if (ReferenceEquals(instanceT1, instanceT2))
-{
-    Console.WriteLine("Both threads obtained the same instance. Singleton pattern confirmed.");
-}
-else
-{
-    Console.WriteLine("Instances obtained by threads are different.");
+    public int Id { get; set; }
+    public string FullName { get; set; }
+    public int Salary { get; set; }
 }
 
-Console.WriteLine("Threads completed.");
+class myProgram
+{
+    static void Main(string[] args)
+    {
+        // Create a list of employees
+        List<Employee> employees = new List<Employee>
+        {
+            new Employee { Id = 1, FullName = "John Doe", Salary = 50000 },
+            new Employee { Id = 2, FullName = "Jane Smith", Salary = 55000 },
+            new Employee { Id = 3, FullName = "Michael Johnson", Salary = 60000 },
+            new Employee { Id = 4, FullName = "Emily Brown", Salary = 52000 },
+            new Employee { Id = 5, FullName = "David Wilson", Salary = 58000 }
+        };
+
+        // Start multiple threads, and add employees in database
+        foreach (Employee employee in employees)
+        {
+            // Create a new thread for each employee
+            Thread thread = new Thread((object emp) =>
+            {
+                Employee empDetails = (Employee)emp;
+
+                // Get the singleton instance of DatabaseManager
+                DatabaseManager dbManager = DatabaseManager.Instance;
+
+                // Insert data in the table
+                dbManager.AddDataToTable(empDetails.Id, empDetails.FullName, empDetails.Salary);
+            });
+
+            // Start the thread and pass the employee object as a parameter
+            thread.Start(employee);
+        }
+    }
+}
