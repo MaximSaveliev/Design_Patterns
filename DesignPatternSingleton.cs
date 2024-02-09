@@ -72,5 +72,29 @@ namespace Design_Patterns
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }
+
+        public void UpdateSalary(int Id, int newSalary)
+        {
+           try
+           {
+               using (SqlConnection connection = new SqlConnection(_connectionStringBuilder.ConnectionString))
+               {
+                   // Define the SQL query for update employees salary
+                   string query = $"UPDATE Employees SET Salary = @Salary WHERE Id = @Id";
+                   SqlCommand command = new SqlCommand(query, connection);
+                   // Assign parameters to the command to prevent SQL injection
+                   command.Parameters.AddWithValue("@Salary", newSalary);
+                   command.Parameters.AddWithValue("@Id", Id);
+
+                   // Open Connection and execute Query
+                   connection.Open();
+                   command.ExecuteNonQuery();
+               }
+           }
+           catch (Exception ex)
+           {
+               Console.WriteLine($"Error updating salary: {ex.Message}");
+           }
+        }
     }
 }

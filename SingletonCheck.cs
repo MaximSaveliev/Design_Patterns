@@ -41,5 +41,10 @@ class myProgram
             // Start the thread and pass the employee object as a parameter
             thread.Start(employee);
         }
+
+        // Get instance of SalaryService
+        SalaryService salaryService = new SalaryService();
+        // Call UpdateSalary function 
+        salaryService.UpdateSalary(3, 110000);
     }
 }
